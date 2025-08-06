@@ -3,7 +3,7 @@ name: Build and Deploy Flutter Web to Firebase Hosting
 on:
   push:
     branches:
-      - master  # غيرها إذا كنت تستخدم `main`
+      - main  # غيرها إذا كنت تستخدم `main`
 
 jobs:
   build:
