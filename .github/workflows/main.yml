@@ -1,52 +1,40 @@
-name: Build and Deploy Flutter Web to Firebase Hosting
-
+name: Build and Deploy
 on:
   push:
     branches:
-      - main  # غيرها إذا كنت تستخدم `main`
-
+      - main
 jobs:
   build:
-    name: Build Flutter Web
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.0' # عدل للإصدار اللي عندك
-
+        uses: actions/checkout@master
       - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Build Flutter Web
-        run: flutter build web
-
-      - name: Upload Build Output
-        uses: actions/upload-artifact@v3
+        run: npm install
+      - name: Build
+        run: npm run build-prod
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@master
         with:
-          name: build-web
-          path: build/web
-
+          name: dist
+          path: dist
   deploy:
-    name: Deploy to Firebase Hosting
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Download Build Output
-        uses: actions/download-artifact@v3
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Download Artifact
+        uses: actions/download-artifact@master
         with:
-          name: build-web
-          path: build/web
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
+          name: dist
+          path: dist
       - name: Deploy to Firebase
-        run: firebase deploy --only hosting
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:portfolio-f550b
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          PROJECT_PATH: ./
