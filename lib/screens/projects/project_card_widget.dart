@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahmoudbakir_portfolio/model/project_model.dart';
 import 'package:mahmoudbakir_portfolio/screens/projects/project_detail.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectCard extends StatelessWidget {
   final ProjectModel project;
@@ -42,7 +43,7 @@ class ProjectCard extends StatelessWidget {
                 top: Radius.circular(15),
               ),
               child: Image.network(
-                project.image,
+                project.mainImageUrl!,
                 fit: BoxFit.cover,
                 height: 200, // ارتفاع الصورة
                 width: double.infinity,
@@ -102,8 +103,10 @@ class ProjectCard extends StatelessWidget {
 
                   // زر "Code"
                   ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       // GitHub action
+                      final Uri uri = Uri.parse(project.githubUrl!);
+                      await launchUrl(uri);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.withOpacity(0.1),

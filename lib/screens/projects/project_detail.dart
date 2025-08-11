@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahmoudbakir_portfolio/const/string.dart';
 import 'package:mahmoudbakir_portfolio/model/project_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   final ProjectModel project;
@@ -68,7 +69,7 @@ class ProjectDetailScreen extends StatelessWidget {
                           bottom: Radius.circular(20),
                         ),
                         child: Image.network(
-                          project.image,
+                          project.mainImageUrl!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                         ),
@@ -217,7 +218,7 @@ class ProjectDetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'This is a comprehensive project that showcases my skills in Flutter development. The application features modern UI design, smooth animations, and seamless user experience.',
+                              project.description,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 height: 1.6,
@@ -250,8 +251,10 @@ class ProjectDetailScreen extends StatelessWidget {
                       // زر عرض الكود
                       Center(
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
                             // GitHub action
+                            final Uri uri = Uri.parse(project.githubUrl!);
+                            await launchUrl(uri);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue.withOpacity(0.8),
@@ -292,9 +295,12 @@ class ProjectDetailScreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: 3,
                           itemBuilder: (context, index) {
-                            return const SizedBox(
+                            return SizedBox(
                               width: 120,
-                              child: ProjectThumbnail(),
+                              child: ProjectThumbnail(
+                                galleryImageUrls:
+                                    project.galleryImageUrls[index],
+                              ),
                             );
                           },
                         ),
@@ -313,8 +319,10 @@ class ProjectDetailScreen extends StatelessWidget {
 }
 
 // مكون لعرض صورة صغيرة للمشاريع المرتبطة
+// ignore: must_be_immutable
 class ProjectThumbnail extends StatelessWidget {
-  const ProjectThumbnail({super.key});
+  String galleryImageUrls;
+  ProjectThumbnail({super.key, required this.galleryImageUrls});
 
   @override
   Widget build(BuildContext context) {
@@ -333,10 +341,7 @@ class ProjectThumbnail extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.network(
-          'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
-          fit: BoxFit.cover,
-        ),
+        child: Image.network(galleryImageUrls, fit: BoxFit.cover),
       ),
     );
   }

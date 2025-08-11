@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AboutSection extends StatelessWidget {
-  const AboutSection({super.key});
+  final String bio;
+  const AboutSection({super.key, required this.bio});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class AboutSection extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'I am a passionate Flutter developer and UI/UX designer with experience in building beautiful and responsive applications. I love turning ideas into reality.',
+            bio,
             style: TextStyle(fontSize: 18, color: Colors.grey[300]),
             textAlign: TextAlign.center,
           ),

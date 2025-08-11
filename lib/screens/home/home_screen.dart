@@ -7,6 +7,7 @@ import 'package:mahmoudbakir_portfolio/screens/about/about_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/contact/contact_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/projects/project_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/skills/skills_screen.dart';
+import 'package:mahmoudbakir_portfolio/utils/supbase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,10 +29,18 @@ class _HomeScreenState extends State<HomeScreen> {
   // لعرض زر العودة للأعلى
   bool _showBackToTop = false;
 
+  // البيانات المراد جلبها
+  Map<String, dynamic>? userData;
+  List<String> skills = [];
+  List<Map<String, dynamic>> projects = [];
+
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _loadData(); // جلب البيانات عند التحميل
   }
 
   @override
@@ -42,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    // عرض/إخفاء زر العودة للأعلى فقط
     if (_scrollController.offset > 500 && !_showBackToTop) {
       setState(() {
         _showBackToTop = true;
@@ -78,6 +86,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // 🔽 جلب البيانات من Supabase
+  Future<void> _loadData() async {
+    try {
+      // تأكد من تهيئة Supabase
+      SupabaseService().initSupabase();
+
+      // جلب بيانات المستخدم
+      final user = await SupabaseService().getUserData();
+      final userSkills = await SupabaseService().getSkills();
+      final userProjects = await SupabaseService().getProjects();
+
+      if (mounted) {
+        setState(() {
+          userData = user;
+          skills = userSkills;
+          projects = userProjects;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('فشل تحميل البيانات: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,49 +146,67 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // المحتوى القابل للتمرير
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          _isLoading
+              ? Center(child: CircularProgressIndicator(color: Colors.white))
+              : SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
 
-                // صورة المستخدم
-                buildProfileImage(),
+                      // صورة المستخدم
+                      buildProfileImage(),
 
-                // الاسم
-                buildName(name: 'Mahmoud Bakir'),
-                SizedBox(height: 20),
+                      // الاسم
+                      buildName(name: userData?['name'] ?? 'Loading...'),
+                      SizedBox(height: 20),
 
-                // الوصف
-                buildProfession(
-                  profession: 'Flutter Developer & UI/UX Designer',
+                      // الوصف
+                      buildProfession(
+                        profession:
+                            userData?['profession'] ??
+                            'Flutter Developer & UI/UX Designer',
+                      ),
+                      SizedBox(height: 30),
+
+                      // رموز التواصل الاجتماعي
+                      buildSocialMedia(),
+                      SizedBox(height: 40),
+
+                      // قائمة التنقل
+                      buildMobility(),
+                      SizedBox(height: 40),
+
+                      // الأقسام
+                      Container(
+                        key: _aboutKey,
+                        child: AboutSection(bio: userData?['bio'] ?? ''),
+                      ),
+                      SizedBox(height: 40),
+
+                      Container(
+                        key: _skillsKey,
+                        child: SkillsSection(skills: skills),
+                      ),
+                      SizedBox(height: 40),
+
+                      Container(
+                        key: _projectsKey,
+                        child: ProjectsSection(projects: projects),
+                      ),
+                      SizedBox(height: 40),
+
+                      Container(key: _contactKey, child: ContactSection()),
+                      SizedBox(height: 60),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 30),
 
-                // رموز التواصل الاجتماعي
-                buildSocialMedia(),
-                SizedBox(height: 40),
-
-                // قائمة التنقل (بدون مؤشر نشط)
-                buildMobility(),
-                SizedBox(height: 40),
-
-                // الأقسام
-                Container(key: _aboutKey, child: AboutSection()),
-                SizedBox(height: 40),
-                Container(key: _skillsKey, child: SkillsSection()),
-                SizedBox(height: 40),
-                Container(key: _projectsKey, child: ProjectsSection()),
-                SizedBox(height: 40),
-                Container(key: _contactKey, child: ContactSection()),
-                SizedBox(height: 60),
-              ],
-            ),
-          ),
-
-          // زر العودة إلى الأعلى (يظهر عند التمرير لأسفل)
+          // زر العودة إلى الأعلى
           if (_showBackToTop)
             Positioned(
               bottom: 30,
@@ -169,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // دالة لعرض الصورة الاحترافية
   Widget buildProfileImage() {
+    String? imageUrl = userData?['profile_image_url'];
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -185,26 +243,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: CircleAvatar(
           radius: 70,
           backgroundColor: Colors.grey.shade800,
-          backgroundImage: NetworkImage(
-            'https://media.licdn.com/dms/image/v2/D4D03AQH2wY9Z8ZxQ2A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1728381335263?e=1733356800&v=beta&t=6Y9Xa3W6Qv9hZJZ9qY0XZQZJZ9qY0XZQZJZ9qY0XZQ',
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(2),
-            child: ClipOval(
-              child: Image.network(
-                'https://media.licdn.com/dms/image/v2/D4D03AQH2wY9Z8ZxQ2A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1728381335263?e=1733356800&v=beta&t=6Y9Xa3W6Qv9hZJZ9qY0XZQZJZ9qY0XZQZJZ9qY0XZQ',
-                fit: BoxFit.cover,
-                width: 136,
-                height: 136,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[700],
-                    child: Icon(Icons.person, size: 70, color: Colors.white),
-                  );
-                },
-              ),
-            ),
-          ),
+          backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+          child: imageUrl == null
+              ? Icon(Icons.person, size: 70, color: Colors.white)
+              : null,
         ),
       ),
     );
@@ -234,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Row buildSocialMedia() {
     return Row(
+      spacing: 20,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
@@ -301,22 +344,17 @@ class _HomeScreenState extends State<HomeScreen> {
       spacing: 20,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // About Me
         _buildNavButton('About Me', _aboutKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
-        // Skills
         _buildNavButton('Skills', _skillsKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
-        // Projects
         _buildNavButton('Projects', _projectsKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
-        // Contact
         _buildNavButton('Contact', _contactKey),
       ],
     );
   }
 
-  // زر بسيط بدون حالة نشطة
   Widget _buildNavButton(String label, GlobalKey key) {
     return GestureDetector(
       onTap: () => _scrollTo(key),
