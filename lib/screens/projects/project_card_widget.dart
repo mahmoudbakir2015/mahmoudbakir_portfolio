@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahmoudbakir_portfolio/model/project_model.dart';
@@ -29,51 +31,56 @@ class ProjectCard extends StatelessWidget {
               offset: const Offset(0, 5),
             ),
           ],
-          gradient: const LinearGradient(
-            colors: [Colors.white, Colors.grey],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white, // خلفية بيضاء بدلاً من gradient
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(15),
-                ),
-                child: Image.network(
-                  project.image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
+            // صورة المشروع
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(15),
+              ),
+              child: Image.network(
+                project.image,
+                fit: BoxFit.cover,
+                height: 200, // ارتفاع الصورة
+                width: double.infinity,
               ),
             ),
+
+            // تفاصيل المشروع
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // عنوان المشروع
                   Text(
                     project.title,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 18,
                       color: Colors.black,
                     ),
                   ),
+
                   const SizedBox(height: 8),
+
+                  // وصف المشروع
                   Text(
                     project.description,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey[600],
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+
                   const SizedBox(height: 10),
+
+                  // تقنيات المشروع
                   Wrap(
                     spacing: 5,
                     runSpacing: 5,
@@ -90,30 +97,28 @@ class ProjectCard extends StatelessWidget {
                         )
                         .toList(),
                   ),
+
                   const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // GitHub action
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.withOpacity(0.1),
-                          foregroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: GoogleFonts.poppins(fontSize: 10),
-                        ),
-                        icon: const Icon(Icons.code, size: 12),
-                        label: const Text('Code'),
+
+                  // زر "Code"
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // GitHub action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.withOpacity(0.1),
+                      foregroundColor: const Color.fromARGB(255, 11, 16, 20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
                       ),
-                    ],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textStyle: GoogleFonts.poppins(fontSize: 10),
+                    ),
+                    icon: const Icon(Icons.code, size: 12),
+                    label: const Text('Code'),
                   ),
                 ],
               ),
