@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahmoudbakir_portfolio/const/string.dart';
 import 'package:mahmoudbakir_portfolio/screens/about/about_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/contact/contact_screen.dart';
+import 'package:mahmoudbakir_portfolio/screens/language/language_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/projects/project_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/skills/skills_screen.dart';
 import 'package:mahmoudbakir_portfolio/utils/supbase_service.dart';
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _skillsKey = GlobalKey();
   final GlobalKey _projectsKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
+  final GlobalKey _languagesKey = GlobalKey();
 
   // لعرض زر العودة للأعلى
   bool _showBackToTop = false;
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? userData;
   List<String> skills = [];
   List<Map<String, dynamic>> projects = [];
+  List<Map<String, dynamic>> spokenLanguages = [];
 
   bool _isLoading = true;
 
@@ -96,12 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
       final user = await SupabaseService().getUserData();
       final userSkills = await SupabaseService().getSkills();
       final userProjects = await SupabaseService().getProjects();
+      final userLanguages = await SupabaseService().getSpokenLanguages();
 
       if (mounted) {
         setState(() {
           userData = user;
           skills = userSkills;
           projects = userProjects;
+          spokenLanguages = userLanguages;
           _isLoading = false;
         });
       }
@@ -193,7 +198,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: SkillsSection(skills: skills),
                       ),
                       SizedBox(height: 40),
-
+                      // ✅ قسم اللغات
+                      Container(
+                        key: _languagesKey,
+                        child: LanguagesSection(
+                          languages:
+                              spokenLanguages, // مثل: [{'name': 'Arabic', 'proficiency': 95}, ...]
+                        ),
+                      ),
+                      SizedBox(height: 40),
                       Container(
                         key: _projectsKey,
                         child: ProjectsSection(projects: projects),
@@ -347,6 +360,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildNavButton('About Me', _aboutKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
         _buildNavButton('Skills', _skillsKey),
+        Icon(Icons.circle, size: 8, color: Colors.white),
+        _buildNavButton('Languages', _languagesKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
         _buildNavButton('Projects', _projectsKey),
         Icon(Icons.circle, size: 8, color: Colors.white),

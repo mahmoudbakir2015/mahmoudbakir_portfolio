@@ -1,13 +1,9 @@
-// ignore_for_file: deprecated_member_use
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SkillsSection extends StatelessWidget {
   final List<String> skills;
-  SkillsSection({super.key, required this.skills});
+  const SkillsSection({super.key, required this.skills});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +23,14 @@ class SkillsSection extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'assets/hexagon_background.png',
+          ), // خلفية المثاقب السداسية
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,8 +58,10 @@ class SkillsSection extends StatelessWidget {
                 label: _buildSkillChip(skill, color),
                 backgroundColor: color.withOpacity(0.1),
                 side: BorderSide(color: color.withOpacity(0.3)),
-                padding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // شكل دائري
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
               );
             }).toList(),
           ),
@@ -65,31 +71,13 @@ class SkillsSection extends StatelessWidget {
   }
 
   Widget _buildSkillChip(String skill, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+    return Text(
+      skill,
+      style: GoogleFonts.poppins(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: color,
       ),
-      child: Text(
-        skill,
-        style: GoogleFonts.poppins(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  final random = Random();
-  Color getRandomColor() {
-    return Color.fromARGB(
-      255,
-      random.nextInt(255),
-      random.nextInt(255),
-      random.nextInt(255),
     );
   }
 }
