@@ -1,10 +1,11 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahmoudbakir_portfolio/const/string.dart';
 import 'package:mahmoudbakir_portfolio/screens/about/about_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/contact/contact_screen.dart';
+import 'package:mahmoudbakir_portfolio/screens/education/education.dart';
 import 'package:mahmoudbakir_portfolio/screens/language/language_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/projects/project_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/skills/skills_screen.dart';
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _projectsKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
   final GlobalKey _languagesKey = GlobalKey();
+  final GlobalKey _educationKey = GlobalKey();
 
   // لعرض زر العودة للأعلى
   bool _showBackToTop = false;
@@ -192,6 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: AboutSection(bio: userData?['bio'] ?? ''),
                       ),
                       SizedBox(height: 40),
+                      Container(
+                        key: _educationKey,
+                        child: EducationSection(
+                          education: userData?['education'] ?? '',
+                        ),
+                      ),
+                      SizedBox(height: 40),
 
                       Container(
                         key: _skillsKey,
@@ -213,7 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 40),
 
-                      Container(key: _contactKey, child: ContactSection()),
+                      Container(
+                        key: _contactKey,
+                        child: ContactSection(userData: userData!),
+                      ),
                       SizedBox(height: 60),
                     ],
                   ),
@@ -354,10 +366,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Row buildMobility() {
     return Row(
-      spacing: 20,
+      spacing: MediaQuery.of(context).size.width * 0.02,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildNavButton('About Me', _aboutKey),
+        Icon(Icons.circle, size: 8, color: Colors.white),
+        _buildNavButton('Education', _educationKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
         _buildNavButton('Skills', _skillsKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
@@ -376,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: MediaQuery.of(context).size.width * 0.025,
           color: Colors.white,
           fontWeight: FontWeight.normal,
         ),

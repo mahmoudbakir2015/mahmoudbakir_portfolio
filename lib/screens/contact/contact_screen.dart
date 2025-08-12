@@ -6,7 +6,8 @@ import 'package:mahmoudbakir_portfolio/const/string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactSection extends StatelessWidget {
-  const ContactSection({super.key});
+  final Map<String, dynamic> userData;
+  const ContactSection({super.key, required this.userData});
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +28,19 @@ class ContactSection extends StatelessWidget {
           SizedBox(height: 10),
           _buildContactItem(
             icon: Icons.email,
-            text: email,
+            text: userData['email'] ?? email,
             onTap: () => _launchEmail(context),
           ),
           const SizedBox(height: 15),
           _buildContactItem(
             icon: Icons.phone,
-            text: phone,
+            text: userData['phone'] ?? phone,
             onTap: () => _launchPhone(context),
           ),
           const SizedBox(height: 15),
           _buildContactItem(
             icon: Icons.location_on,
-            text: location,
+            text: userData['location'] ?? 'Kafr El-Sheikh, Egypt',
             onTap: () => _launchMap(context),
           ),
         ],
