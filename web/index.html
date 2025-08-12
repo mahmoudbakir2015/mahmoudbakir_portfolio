@@ -6,12 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mahmoud Bakir Portfolio</title>
 
-  <!-- Favicon -->
+  <!-- ✅ Preload للملفات الأساسية -->
+  <link rel="preload" href="main.dart.js" as="script" crossorigin="anonymous">
+  <link rel="preload" href="styles.css" as="style">
+
+  <!-- ✅ Favicon -->
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <!-- ✅ تم دمج المانيفيست إلى ملف واحد -->
+
+  <!-- ✅ Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
   <!-- Base href for Flutter Web -->
@@ -30,23 +35,20 @@
   <meta name="theme-color" content="#11181C" />
 </head>
 <body>
-  <!-- Flutter Web Renderer -->
+  <!-- ✅ Flutter Web Renderer -->
   <script>
-    // اختيار renderer تلقائيًا (flutter يختار بين html و canvaskit)
-    // يمكنك تعيينه كـ "canvaskit" لواجهات معقدة
+    // اختار "canvaskit" لأداء أعلى أو "auto" للاختيار التلقائي
     window.flutterWebRenderer = "auto";
   </script>
 
-  <!-- Flutter Bootstrap -->
+  <!-- ✅ Flutter Bootstrap -->
   <script src="flutter_bootstrap.js" defer></script>
 
-  <!-- Firebase SDK -->
+  <!-- ✅ Firebase SDK -->
   <script type="module">
-    // استيراد Firebase
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js';
     import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js';
 
-    // تكوين Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDO1eK31A98neN_sxc6A8jSXwKbN6sm4fw",
       authDomain: "portfolio-f550b.firebaseapp.com",
@@ -57,9 +59,33 @@
       measurementId: "G-3394RH9Q9D"
     };
 
-    // تهيئة Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
+  </script>
+
+  <!-- ✅ Service Worker للتشغيل أوفلاين + إشعار التحديث -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js').then(function (registration) {
+          console.log('ServiceWorker registered with scope:', registration.scope);
+
+          registration.onupdatefound = () => {
+            const installingWorker = registration.installing;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                if (confirm("🔄 يوجد تحديث جديد للتطبيق. هل تريد إعادة التحميل؟")) {
+                  window.location.reload();
+                }
+              }
+            };
+          };
+
+        }).catch(function (error) {
+          console.error('ServiceWorker registration failed:', error);
+        });
+      });
+    }
   </script>
 </body>
 </html>
