@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +32,7 @@ class ProjectCard extends StatelessWidget {
               offset: const Offset(0, 5),
             ),
           ],
-          color: Colors.white, // خلفية بيضاء بدلاً من gradient
+          color: Colors.transparent, // خلفية شفافة
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +62,7 @@ class ProjectCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Colors.black,
+                      color: Colors.white, // نص أبيض
                     ),
                   ),
 
@@ -73,7 +73,7 @@ class ProjectCard extends StatelessWidget {
                     project.description,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Colors.grey[400], // نص رمادي فاتح
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -105,12 +105,15 @@ class ProjectCard extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () async {
                       // GitHub action
+                      log('Opening GitHub URL: ${project.githubUrl}');
                       final Uri uri = Uri.parse(project.githubUrl!);
                       await launchUrl(uri);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.withOpacity(0.1),
-                      foregroundColor: const Color.fromARGB(255, 11, 16, 20),
+                      backgroundColor: Colors.blue.withOpacity(
+                        0.1,
+                      ), // خلفية الزر
+                      foregroundColor: Colors.blue, // نص الزر
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 5,
