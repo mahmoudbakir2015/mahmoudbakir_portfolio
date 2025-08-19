@@ -109,4 +109,28 @@ class SupabaseService {
       throw Exception('Failed to save contact message: $e');
     }
   }
+
+  Future<Map<String, dynamic>?> getLatestCv() async {
+    try {
+      final response = await _client
+          .from('cv_files')
+          .select('file_name, file_url, uploaded_at')
+          .order('uploaded_at', ascending: false)
+          .limit(1);
+
+      if (response.isEmpty) return null;
+      return response[0];
+    } on PostgrestException catch (e) {
+      log('Database error fetching CV: ${e.message}');
+      return null;
+    } catch (e) {
+      log('Unexpected error fetching CV: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getCvUrl() async {
+    final cv = await getLatestCv();
+    return cv?['file_url'] as String?;
+  }
 }

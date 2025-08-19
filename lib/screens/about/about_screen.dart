@@ -24,7 +24,7 @@ class AboutSection extends StatelessWidget {
           Text(
             bio,
             style: TextStyle(fontSize: 18, color: Colors.grey[300]),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
           ),
         ],
       ),

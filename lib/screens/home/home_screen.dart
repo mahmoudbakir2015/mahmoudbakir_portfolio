@@ -8,6 +8,7 @@ import 'package:mahmoudbakir_portfolio/screens/contact/contact_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/education/education.dart';
 import 'package:mahmoudbakir_portfolio/screens/language/language_screen.dart';
 import 'package:mahmoudbakir_portfolio/screens/projects/project_screen.dart';
+import 'package:mahmoudbakir_portfolio/screens/resume/resume.dart';
 import 'package:mahmoudbakir_portfolio/screens/skills/skills_screen.dart';
 import 'package:mahmoudbakir_portfolio/utils/supbase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _skillsKey = GlobalKey();
   final GlobalKey _projectsKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
+  final GlobalKey _resumeKey = GlobalKey();
   final GlobalKey _languagesKey = GlobalKey();
   final GlobalKey _educationKey = GlobalKey();
 
@@ -38,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> skills = [];
   List<Map<String, dynamic>> projects = [];
   List<Map<String, dynamic>> spokenLanguages = [];
+  String resumeUrl = '';
 
   bool _isLoading = true;
 
@@ -102,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final userSkills = await SupabaseService().getSkills();
       final userProjects = await SupabaseService().getProjects();
       final userLanguages = await SupabaseService().getSpokenLanguages();
+      final userResume = await SupabaseService().getCvUrl();
 
       if (mounted) {
         setState(() {
@@ -109,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
           skills = userSkills;
           projects = userProjects;
           spokenLanguages = userLanguages;
+          resumeUrl = userResume!;
           _isLoading = false;
         });
       }
@@ -225,6 +230,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         key: _contactKey,
                         child: ContactSection(userData: userData!),
+                      ),
+                      SizedBox(height: 60),
+                      Container(
+                        key: _resumeKey,
+                        child: ResumeSection(cvUrl: resumeUrl),
                       ),
                       SizedBox(height: 60),
                     ],
@@ -366,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Row buildMobility() {
     return Row(
-      spacing: MediaQuery.of(context).size.width * 0.02,
+      spacing: MediaQuery.of(context).size.width * 0.01,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildNavButton('About Me', _aboutKey),
@@ -378,8 +388,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildNavButton('Languages', _languagesKey),
         Icon(Icons.circle, size: 8, color: Colors.white),
         _buildNavButton('Projects', _projectsKey),
+
         Icon(Icons.circle, size: 8, color: Colors.white),
         _buildNavButton('Contact', _contactKey),
+        Icon(Icons.circle, size: 8, color: Colors.white),
+        _buildNavButton('Resume', _resumeKey),
       ],
     );
   }
