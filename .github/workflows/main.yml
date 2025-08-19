@@ -64,6 +64,8 @@ jobs:
     steps:
       - name: Curl Supabase API
         run: |
-          curl -s "https://YOUR_PROJECT.supabase.co/rest/v1/portfolio_data?select=id" \
-          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          curl -sS --fail --max-time 30 \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/portfolio_data?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Prefer: count=none"
