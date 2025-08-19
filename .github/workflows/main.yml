@@ -30,17 +30,23 @@ jobs:
       - name: Build Flutter Web (Release)
         run: flutter build web --release
 
+      # ✅ Setup Node.js (مهم علشان npm)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       # ✅ فحص أداء الموقع قبل النشر باستخدام Lighthouse
-      - name: Install Lighthouse
-        run: npm install -g lighthouse
+      - name: Install Lighthouse & http-server
+        run: npm install -g lighthouse http-server
 
       - name: Run Lighthouse Performance Test
         run: |
-          npx http-server build/web -p 8080 &  # تشغيل السيرفر المحلي
-          sleep 5  # انتظار السيرفر
+          http-server build/web -p 8080 &  # تشغيل السيرفر المحلي
+          sleep 5  # انتظار السيرفر يشتغل
           lighthouse http://localhost:8080 \
             --only-categories=performance,accessibility,best-practices,seo \
             --chrome-flags="--headless" \
@@ -62,7 +68,7 @@ jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Curl Supabase API
+      - name: Ping Supabase API
         run: |
           curl -sS --fail --max-time 30 \
             "${{ secrets.SUPABASE_URL }}/rest/v1/portfolio_data?select=id&limit=1" \
