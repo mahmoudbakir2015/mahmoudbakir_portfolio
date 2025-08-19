@@ -5,6 +5,9 @@ on:
     branches:
       - main  # غيّرها لو بتستخدم master
 
+  schedule:
+    - cron: "0 * * * *"   # ⏰ يرن كل ساعة تلقائيًا للحفاظ على Supabase Active
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -55,3 +58,12 @@ jobs:
         run: firebase deploy --only hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl Supabase API
+        run: |
+          curl -s "https://YOUR_PROJECT.supabase.co/rest/v1/portfolio_data?select=id" \
+          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
