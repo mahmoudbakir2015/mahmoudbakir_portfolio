@@ -281,7 +281,7 @@ class ProjectDetailScreen extends StatelessWidget {
 
                       // العناوين المشابهة
                       Text(
-                        'Related Projects',
+                        'Pictures from inside the application',
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -293,13 +293,28 @@ class ProjectDetailScreen extends StatelessWidget {
                         height: 150,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: 3,
+                          itemCount: project.galleryImageUrls.length,
                           itemBuilder: (context, index) {
                             return SizedBox(
                               width: 120,
-                              child: ProjectThumbnail(
-                                galleryImageUrls:
-                                    project.galleryImageUrls[index],
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      child: InteractiveViewer(
+                                        child: Image.network(
+                                          project.galleryImageUrls[index],
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ProjectThumbnail(
+                                  galleryImageUrls:
+                                      project.galleryImageUrls[index],
+                                ),
                               ),
                             );
                           },

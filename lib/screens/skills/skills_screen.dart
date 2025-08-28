@@ -28,7 +28,7 @@ class SkillsSection extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            'assets/hexagon_background.png',
+            'assets/images/spider.png',
           ), // خلفية المثاقب السداسية
           fit: BoxFit.cover,
         ),

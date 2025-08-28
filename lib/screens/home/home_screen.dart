@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
 
                       // صورة المستخدم
-                      buildProfileImage(),
+                      buildProfileImage(context),
 
                       // الاسم
                       buildName(name: userData?['name'] ?? 'Loading...'),
@@ -260,28 +260,45 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // دالة لعرض الصورة الاحترافية
-  Widget buildProfileImage() {
+  Widget buildProfileImage(BuildContext context) {
     String? imageUrl = userData?['profile_image_url'];
+
     return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.5), width: 3),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-              color: Colors.black.withOpacity(0.3),
-            ),
-          ],
-        ),
-        child: CircleAvatar(
-          radius: 70,
-          backgroundColor: Colors.grey.shade800,
-          backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
-          child: imageUrl == null
-              ? Icon(Icons.person, size: 70, color: Colors.white)
-              : null,
+      child: GestureDetector(
+        onTap: () {
+          if (imageUrl != null) {
+            showDialog(
+              context: context,
+              builder: (_) => Dialog(
+                backgroundColor: Colors.black,
+                insetPadding: EdgeInsets.all(10),
+                child: InteractiveViewer(
+                  child: Image.network(imageUrl, fit: BoxFit.contain),
+                ),
+              ),
+            );
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withOpacity(0.5), width: 3),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 70,
+            backgroundColor: Colors.grey.shade800,
+            backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+            child: imageUrl == null
+                ? Icon(Icons.person, size: 70, color: Colors.white)
+                : null,
+          ),
         ),
       ),
     );
